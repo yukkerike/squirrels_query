@@ -122,6 +122,7 @@ async function getClan(clanId) {
             data.statistics[i].uid = await getUser(data.statistics[i].uid, 8 | 256)
             data.rank.dailyPlayerExp += data.statistics[i].samples
         }
+        data.statistics.sort((a, b) => b.exp - a.exp)
         for (let i = 0; i < data.blacklist.length; i++) {
             data.blacklist[i] = await getUser(data.blacklist[i], 8 | 256)
         }
