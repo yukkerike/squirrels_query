@@ -84,7 +84,9 @@ async function getUser(uid, mask) {
             client,
             () => client.sendData('REQUEST', [[uid]], mask),
             'packet.incoming',
-            'PacketInfo',
+            function (packet) {
+                return packet.type === 'PacketInfo' && packet.data.data[0].uid === parseInt(uid)
+            },
             1000)
         data = data.data.data[0]
         if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
@@ -103,14 +105,18 @@ async function getClan(clanId) {
             client,
             () => client.sendData('CLAN_REQUEST', [[clanId]], mask),
             'packet.incoming',
-            'PacketClanInfo',
+            function (packet) {
+                return packet.type === 'PacketClanInfo' && packet.data.data[0].id === parseInt(clanId)
+            },
             1000)
         data = data.data.data[0]
         let members = await executeAndWait(
             client,
             () => client.sendData('CLAN_GET_MEMBERS', clanId),
             'packet.incoming',
-            'PacketClanMembers',
+            function (packet) {
+                return packet.type === 'PacketClanMembers' && packet.data.clanId === parseInt(clanId)
+            },
             1000)
         data.leader_id = await getUser(data.leader_id, 8 | 256)
         data.members = members.data.playerIds
