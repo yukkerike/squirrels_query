@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{> materialize}}
+    <title>{{ info.name }}</title>
+    <style>
+        pre, td, .collection-item {
+            margin: 0 !important;
+            padding: 3px !important;
+        }
+    </style>
+</head>
+
+<body>
+    {{> navbar}}
+    <table>
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>{{ id }}</td>
+            </tr>
+            <tr>
+                <td>Название</td>
+                <td>{{ info.name }}</td>
+            </tr>
+            <tr>
+                <td>Эмблема</td>
+                <td><img src="{{ info.emblem }}" /><img src="{{ info.photo }}" /></td>
+            </tr>
+            <tr>
+                <td>В бане</td>
+                <td>{{ ban }}</td>
+            </tr>
+            <tr>
+                <td>Вождь</td>
+                <td><a href="/user/{{ leader_id.uid }}"><pre>{{ leader_id.name }}[{{leader_id.level}}]</pre></a></td>
+            </tr>
+            <tr>
+                <td>Новость</td>
+                <td>
+                    <pre>{{ news }}</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>Уровень</td>
+                <td>{{ rank.level }}</td>
+            </tr>
+            <tr>
+                <td>Лимит уровня</td>
+                <td>{{ level_limiter }}</td>
+            </tr>
+            <tr>
+                <td>Опыт</td>
+                <td>{{ rank.exp }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Статистика за прошедшие сутки
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Игрок</td>
+                                <td>Опыт игрока</td>
+                                <td>Опыт клана</td>
+                            </tr>
+                            {{#each statistics}}
+                            <tr>
+                                <td>
+                                    <a href="/user/{{ this.uid.uid }}"><pre>{{ this.uid.name }}[{{ this.uid.level }}]</pre></a>
+                                </td>
+                                <td>{{ this.samples }}</td>
+                                <td>{{ this.exp }}</td>
+                            </tr>
+                            {{/each}}
+                            <tr>
+                                <td>Всего</td>
+                                <td>{{ rank.dailyPlayerExp }}</td>
+                                <td>{{ rank.dailyExp }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>Члены клана</td>
+                <td>
+                    <div class="collection">
+                        {{#each members}}
+                        <a href="/user/{{ this.uid }}" class="collection-item"><pre>{{ this.name }}[{{ this.level }}]</pre></a>
+                        {{/each}}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Чёрный список</td>
+                <td>
+                    <div class="collection">
+                        {{#each blacklist}}
+                        <a href="/user/{{ this.uid }}" class="collection-item"><pre>{{ this.name }}[{{ this.level }}]</pre></a>
+                        {{/each}}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

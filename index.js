@@ -1,49 +1,84 @@
-// basic express server
 const express = require('express')
+const hbs = require("hbs");
+const rateLimit = require('express-rate-limit')
 const {
-    waitForResult,
     executeAndWait,
     composeLogin,
     createClient,
     experienceToLevel,
     shamanExperienceToLevel
 } = require('./helpers')
+const path = require('path')
 
 const app = express()
-const port = 3000
-const token = ''
+const port = 3000 || process.env.PORT
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+    max: 100,
+	standardHeaders: true,
+	legacyHeaders: false,
+})
+app.use(limiter)
+app.set("view engine", "hbs")
+hbs.registerPartials(path.join(__dirname, "views", "partials"));
+app.set('views', path.join(__dirname, "views"));
+
+const token = process.env.TOKEN
 let client = null
 login(token)
 
 app.get('/', async (req, res) => {
-    // const client = login(token)
-    res.send("test")
+    res.render("index")
 });
 
 app.get('/user/:userId', async (req, res) => {
-    // get user info from query
     const userId = req.params.userId
-    const data = await getUser(userId)
+    const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536
+    const data = await getUser(userId, mask)
     if (data === null) {
         res.send('User not found')
     } else {
-        res.send(data)
+        let bdate = new Date(data.person_info.bdate * 1000)
+        bdate = `${bdate.getUTCDate()}.${bdate.getUTCMonth() + 1}.${bdate.getUTCFullYear()}`
+        res.render("user", { 
+            uid: data.uid,
+            name: data.name,
+            level: data.level,
+            shaman_level: data.shaman_level,
+            moderator: data.moderator ? "Да" : "Нет",
+            online: data.online ? "Да" : "Нет",
+            sex: data.sex == 1 ? "Женский" : "Мужской",
+            clan_id: data.clan_id,
+            is_gone: data.is_gone ? "Да" : "Нет",
+            profile: data.person_info.profile,
+            bdate: bdate,
+            vip_exist: data.vip_info.vip_exist ? "Да" : "Нет",
+            exp: data.exp,
+            shaman_exp: data.shaman_exp,
+         })
     }
 });
 
-app.get('/clan/:leaderId', async (req, res) => {
-    // get user info from query
-    const leaderId = req.params.leaderId
-    let data = await getUser(leaderId)
-    const clanId = data.clan_id
+app.get('/clan/:clanId', async (req, res) => {
+    const clanId = req.params.clanId
     const clan = await getClan(clanId)
-    res.send(clan)
+    res.render("clan", {
+        id: clan.id,
+        info: clan.info,
+        news: clan.news,
+        leader_id: clan.leader_id,
+        rank: clan.rank,
+        ban: clan.ban ? "Да" : "Нет",
+        level_limiter: clan.level_limiter,
+        members: clan.members,
+        blacklist: clan.blacklist,
+        statistics: clan.statistics,
+    })
 });
 
 app.listen(port, () => console.log(`Сервер запущен на порте ${port}`))
 
-async function getUser(uid) {
-    const mask = 0 | 4 | 8 | 16 | 128 | 256 | 1024 | 65536
+async function getUser(uid, mask) {
     try {
         let data = await executeAndWait(
             client,
@@ -52,24 +87,47 @@ async function getUser(uid) {
             'PacketInfo',
             1000)
         data = data.data.data[0]
-        data.level = experienceToLevel(data.exp)
-        data.shamanLevel = shamanExperienceToLevel(data.shaman_exp)
+        if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
+        if (data.shaman_exp !== undefined) data.shaman_level = shamanExperienceToLevel(data.shaman_exp)
         return data
     } catch (e) {
+        console.log(e)
         return null
     }
 }
 
 async function getClan(clanId) {
+    const mask = 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384
     try {
         let data = await executeAndWait(
             client,
-            () => client.sendData('CLAN_REQUEST', [[clanId]], 32767),
+            () => client.sendData('CLAN_REQUEST', [[clanId]], mask),
             'packet.incoming',
             'PacketClanInfo',
             1000)
+        data = data.data.data[0]
+        let members = await executeAndWait(
+            client,
+            () => client.sendData('CLAN_GET_MEMBERS', clanId),
+            'packet.incoming',
+            'PacketClanMembers',
+            1000)
+        data.leader_id = await getUser(data.leader_id, 8 | 256)
+        data.members = members.data.playerIds
+        for (let i = 0; i < data.members.length; i++) {
+            data.members[i] = await getUser(data.members[i], 8 | 256)
+        }
+        data.rank.dailyPlayerExp = 0
+        for (let i = 0; i < data.statistics.length; i++) {
+            data.statistics[i].uid = await getUser(data.statistics[i].uid, 8 | 256)
+            data.rank.dailyPlayerExp += data.statistics[i].samples
+        }
+        for (let i = 0; i < data.blacklist.length; i++) {
+            data.blacklist[i] = await getUser(data.blacklist[i], 8 | 256)
+        }
         return data
     } catch (e) {
+        console.log(e)
         return null
     }
 }
@@ -77,7 +135,7 @@ async function getClan(clanId) {
 function login(token) {
     client = createClient('88.212.206.137', ['11111', '11211', '11311'])
     client.setMaxListeners(0)
-    const handlePacket = function(client, packet, buffer) {
+    const handlePacket = function (client, packet, buffer) {
         switch (packet.type) {
             case 'PacketGuard':
                 client.sendData('GUARD', [])
@@ -99,6 +157,9 @@ function login(token) {
         }
         if (login.data.status !== 0) client.close()
         client.sendData('AB_GUI_ACTION', 0)
+        setInterval(() => {
+            client.sendData('PING', 0)
+        }, 30000)
     }
     const handleClose = function (client) {
         console.log('Client closed')
