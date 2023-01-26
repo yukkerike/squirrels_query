@@ -7,12 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{> materialize}}
     <title>{{ info.name }}</title>
-    <style>
-        pre, td, .collection-item {
-            margin: 0 !important;
-            padding: 3px !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -42,7 +36,7 @@
             <tr>
                 <td>Новость</td>
                 <td>
-                    <pre>{{ news }}</pre>
+                    <pre style="white-space: pre-wrap;">{{ news }}</pre>
                 </td>
             </tr>
             <tr>
