@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{> materialize}}
+    <title>{{ name }}</title>
+    <style>
+        pre, td {
+            margin: 0 !important;
+            padding: 3px !important;
+        }
+    </style>
+</head>
+
+<body>
+    {{> navbar}}
+    <table>
+        <tbody>
+            <tr>
+                <td>UID</td>
+                <td>{{ uid }}</td>
+            </tr>
+            <tr>
+                <td>Никнейм</td>
+                <td><pre>{{ name }}</pre></td>
+            </tr>
+            <tr>
+                <td>Уровень</td>
+                <td>{{ level }}</td>
+            </tr>
+            <tr>
+                <td>Уровень шамана</td>
+                <td>{{ shaman_level }}</td>
+            </tr>
+            <tr>
+                <td>Модератор</td>
+                <td>{{ moderator }}</td>
+            </tr>
+            <tr>
+                <td>Онлайн</td>
+                <td>{{ online }}</td>
+            </tr>
+            <tr>
+                <td>Пол</td>
+                <td>{{ sex }}</td>
+            </tr>
+            <tr>
+                <td>ID клана</td>
+                <td>{{ clan_id }}</td>
+            </tr>
+            <tr>
+                <td>Давно не играл</td>
+                <td>{{ is_gone }}</td>
+            </tr>
+            <tr>
+                <td>Страница</td>
+                <td><a href="{{ profile }}">{{ profile }}</a></td>
+            </tr>
+            <tr>
+                <td>Дата рождения</td>
+                <td>{{ bdate }}</td>
+            </tr>
+            <tr>
+                <td>Есть VIP</td>
+                <td>{{ vip_exist }}</td>
+            </tr>
+            <tr>
+                <td>Опыт</td>
+                <td>{{ exp }}</td>
+            </tr>
+            <tr>
+                <td>Опыт шамана</td>
+                <td>{{ shaman_exp }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
