@@ -31,7 +31,7 @@
             </tr>
             <tr>
                 <td>Вождь</td>
-                <td><a href="/user/{{ leader_id.uid }}"><pre>{{ leader_id.name }}[{{leader_id.level}}]</pre></a></td>
+                <td><a href="/user/{{ leader_id.uid }}" target='_blank'><pre>{{ leader_id.name }}[{{leader_id.level}}]</pre></a></td>
             </tr>
             <tr>
                 <td>Новость</td>
@@ -57,20 +57,23 @@
                     <table>
                         <tbody>
                             <tr>
+                                <td></td>
                                 <td>Игрок</td>
                                 <td>Опыт игрока</td>
                                 <td>Опыт клана</td>
                             </tr>
                             {{#each statistics}}
                             <tr>
+                                <td>{{ inc @index}}</td>
                                 <td>
-                                    <a href="/user/{{ this.uid.uid }}"><pre>{{ this.uid.name }}[{{ this.uid.level }}]</pre></a>
+                                    <a href="/user/{{ this.uid.uid }}" target='_blank'><pre>{{ this.uid.name }}[{{ this.uid.level }}]</pre></a>
                                 </td>
                                 <td>{{ this.samples }}</td>
                                 <td>{{ this.exp }}</td>
                             </tr>
                             {{/each}}
                             <tr>
+                                <td></td>
                                 <td>Всего</td>
                                 <td>{{ rank.dailyPlayerExp }}</td>
                                 <td>{{ rank.dailyExp }}</td>
@@ -84,7 +87,7 @@
                 <td>
                     <div class="collection">
                         {{#each members}}
-                        <a href="/user/{{ this.uid }}" class="collection-item"><pre>{{ this.name }}[{{ this.level }}]</pre></a>
+                        <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'><pre>{{ this.name }}[{{ this.level }}]</pre></a>
                         {{/each}}
                     </div>
                 </td>
@@ -94,7 +97,7 @@
                 <td>
                     <div class="collection">
                         {{#each blacklist}}
-                        <a href="/user/{{ this.uid }}" class="collection-item"><pre>{{ this.name }}[{{ this.level }}]</pre></a>
+                        <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'><pre>{{ this.name }}[{{ this.level }}]</pre></a>
                         {{/each}}
                     </div>
                 </td>

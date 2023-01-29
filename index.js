@@ -13,14 +13,15 @@ const path = require('path')
 const app = express()
 const port = 3000 || process.env.PORT
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
+    windowMs: 15 * 60 * 1000,
     max: 100,
-	standardHeaders: true,
-	legacyHeaders: false,
+    standardHeaders: true,
+    legacyHeaders: false,
 })
 app.use(limiter)
 app.set("view engine", "hbs")
 hbs.registerPartials(path.join(__dirname, "views", "partials"));
+hbs.registerHelper("inc", function (value, options) { return parseInt(value) + 1 });
 app.set('views', path.join(__dirname, "views"));
 
 const token = process.env.TOKEN
@@ -40,7 +41,7 @@ app.get('/user/:userId', async (req, res) => {
     } else {
         let bdate = new Date(data.person_info.bdate * 1000)
         bdate = `${bdate.getUTCDate()}.${bdate.getUTCMonth() + 1}.${bdate.getUTCFullYear()}`
-        res.render("user", { 
+        res.render("user", {
             uid: data.uid,
             name: data.name,
             level: data.level,
@@ -55,7 +56,7 @@ app.get('/user/:userId', async (req, res) => {
             vip_exist: data.vip_info.vip_exist ? "Да" : "Нет",
             exp: data.exp,
             shaman_exp: data.shaman_exp,
-         })
+        })
     }
 });
 
