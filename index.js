@@ -77,6 +77,10 @@ app.get('/clan/:clanId', async (req, res) => {
     })
 });
 
+app.get('*', (req, res) => {
+    res.redirect('/')
+})
+
 app.listen(port, () => console.log(`Сервер запущен на порте ${port}`))
 
 async function getUser(uid, mask) {
