@@ -34,6 +34,11 @@ app.get('/', async (req, res) => {
 
 app.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId
+    if (req.query.json === "") {
+        const data = await getUser(userId, 4189855)
+        res.json(data)
+        return
+    }
     const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536
     const data = await getUser(userId, mask)
     if (data === null) {
@@ -62,6 +67,11 @@ app.get('/user/:userId', async (req, res) => {
 
 app.get('/clan/:clanId', async (req, res) => {
     const clanId = req.params.clanId
+    if (req.query.json === "") {
+        const clan = await getClan(clanId, 65535)
+        res.json(clan)
+        return
+    }
     const clan = await getClan(clanId)
     res.render("clan", {
         id: clan.id,
@@ -96,6 +106,7 @@ async function getUsers(uids, mask) {
         for (let i = 0; i < data.length; i++) {
             if (data[i].exp !== undefined) data[i].level = experienceToLevel(data[i].exp)
             if (data[i].shaman_exp !== undefined) data[i].shaman_level = shamanExperienceToLevel(data[i].shaman_exp)
+            if (data[i].name === "") data[i].name = "Без имени"
         }
         return data
     } catch (e) {
@@ -116,6 +127,7 @@ async function getUser(uid, mask) {
         data = data.data.data[0]
         if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
         if (data.shaman_exp !== undefined) data.shaman_level = shamanExperienceToLevel(data.shaman_exp)
+        if (data.name === "") data[i].name = "Без имени"
         return data
     } catch (e) {
         console.log(e)
@@ -123,8 +135,8 @@ async function getUser(uid, mask) {
     }
 }
 
-async function getClan(clanId) {
-    const mask = 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384
+async function getClan(clanId, mask) {
+    mask = mask || 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384
     try {
         let data = await executeAndWait(
             client,
