@@ -83,15 +83,35 @@ app.get('*', (req, res) => {
 
 app.listen(port, () => console.log(`Сервер запущен на порте ${port}`))
 
+async function getUsers(uids, mask) {
+    try {
+        uids = uids.map(uid => [uid])
+        let data = await executeAndWait(
+            client,
+            () => client.sendData('REQUEST', uids, mask),
+            'packet.incoming',
+            packet => packet.type === 'PacketInfo' && packet.data.data.length === uids.length,
+            1000)
+        data = data.data.data
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].exp !== undefined) data[i].level = experienceToLevel(data[i].exp)
+            if (data[i].shaman_exp !== undefined) data[i].shaman_level = shamanExperienceToLevel(data[i].shaman_exp)
+        }
+        return data
+    } catch (e) {
+        console.log(e)
+        return null
+    }
+}
+
 async function getUser(uid, mask) {
     try {
+        if (Array.isArray(uid)) return await getUsers(uid, mask)
         let data = await executeAndWait(
             client,
             () => client.sendData('REQUEST', [[uid]], mask),
             'packet.incoming',
-            function (packet) {
-                return packet.type === 'PacketInfo' && packet.data.data[0].uid === parseInt(uid)
-            },
+            packet => packet.type === 'PacketInfo' && packet.data.data[0].uid === parseInt(uid),
             1000)
         data = data.data.data[0]
         if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
@@ -125,18 +145,14 @@ async function getClan(clanId) {
             1000)
         data.leader_id = await getUser(data.leader_id, 8 | 256)
         data.members = members.data.playerIds
-        for (let i = 0; i < data.members.length; i++) {
-            data.members[i] = await getUser(data.members[i], 8 | 256)
-        }
+        data.members = await getUser(data.members, 8 | 256)
         data.rank.dailyPlayerExp = 0
         for (let i = 0; i < data.statistics.length; i++) {
-            data.statistics[i].uid = await getUser(data.statistics[i].uid, 8 | 256)
+            data.statistics[i].uid = data.members.find(member => member.uid === data.statistics[i].uid)
             data.rank.dailyPlayerExp += data.statistics[i].samples
         }
         data.statistics.sort((a, b) => b.exp - a.exp)
-        for (let i = 0; i < data.blacklist.length; i++) {
-            data.blacklist[i] = await getUser(data.blacklist[i], 8 | 256)
-        }
+        data.blacklist = await getUser(data.blacklist, 8 | 256)
         return data
     } catch (e) {
         console.log(e)
