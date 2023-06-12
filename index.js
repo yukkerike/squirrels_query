@@ -13,14 +13,15 @@ const path = require('path')
 const app = express()
 const port = 3000 || process.env.PORT
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-    max: 100,
-	standardHeaders: true,
-	legacyHeaders: false,
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
 })
 app.use(limiter)
 app.set("view engine", "hbs")
 hbs.registerPartials(path.join(__dirname, "views", "partials"));
+hbs.registerHelper("inc", function (value, options) { return parseInt(value) + 1 });
 app.set('views', path.join(__dirname, "views"));
 
 const token = process.env.TOKEN
@@ -31,8 +32,21 @@ app.get('/', async (req, res) => {
     res.render("index")
 });
 
+app.get('/manifest.json', (req, res) => {
+    res.sendFile(path.join(__dirname, "manifest.json"))
+})
+
+app.get('/sw.js', (req, res) => {
+    res.sendFile(path.join(__dirname, "sw.js"))
+})
+
 app.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId
+    if (req.query.json === "") {
+        const data = await getUser(userId, 4190175)
+        res.json(data)
+        return
+    }
     const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536
     const data = await getUser(userId, mask)
     if (data === null) {
@@ -40,7 +54,7 @@ app.get('/user/:userId', async (req, res) => {
     } else {
         let bdate = new Date(data.person_info.bdate * 1000)
         bdate = `${bdate.getUTCDate()}.${bdate.getUTCMonth() + 1}.${bdate.getUTCFullYear()}`
-        res.render("user", { 
+        res.render("user", {
             uid: data.uid,
             name: data.name,
             level: data.level,
@@ -55,12 +69,17 @@ app.get('/user/:userId', async (req, res) => {
             vip_exist: data.vip_info.vip_exist ? "Да" : "Нет",
             exp: data.exp,
             shaman_exp: data.shaman_exp,
-         })
+        })
     }
 });
 
 app.get('/clan/:clanId', async (req, res) => {
     const clanId = req.params.clanId
+    if (req.query.json === "") {
+        const clan = await getClan(clanId, 65535)
+        res.json(clan)
+        return
+    }
     const clan = await getClan(clanId)
     res.render("clan", {
         id: clan.id,
@@ -73,22 +92,34 @@ app.get('/clan/:clanId', async (req, res) => {
         members: clan.members,
         blacklist: clan.blacklist,
         statistics: clan.statistics,
+        count: {
+            members: clan.members.length,
+            blacklist: clan.blacklist.length
+        }
     })
 });
 
+app.get('*', (req, res) => {
+    res.redirect('/')
+})
+
 app.listen(port, () => console.log(`Сервер запущен на порте ${port}`))
 
-async function getUser(uid, mask) {
+async function getUsers(uids, mask) {
     try {
+        uids = uids.map(uid => [uid])
         let data = await executeAndWait(
             client,
-            () => client.sendData('REQUEST', [[uid]], mask),
+            () => client.sendData('REQUEST', uids, mask),
             'packet.incoming',
-            'PacketInfo',
+            packet => packet.type === 'PacketInfo' && packet.data.data.length === uids.length,
             1000)
-        data = data.data.data[0]
-        if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
-        if (data.shaman_exp !== undefined) data.shaman_level = shamanExperienceToLevel(data.shaman_exp)
+        data = data.data.data
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].exp !== undefined) data[i].level = experienceToLevel(data[i].exp)
+            if (data[i].shaman_exp !== undefined) data[i].shaman_level = shamanExperienceToLevel(data[i].shaman_exp)
+            if (data[i].name === "") data[i].name = "Без имени"
+        }
         return data
     } catch (e) {
         console.log(e)
@@ -96,35 +127,57 @@ async function getUser(uid, mask) {
     }
 }
 
-async function getClan(clanId) {
-    const mask = 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384
+async function getUser(uid, mask) {
+    try {
+        if (Array.isArray(uid)) return await getUsers(uid, mask)
+        let data = await executeAndWait(
+            client,
+            () => client.sendData('REQUEST', [[uid]], mask),
+            'packet.incoming',
+            packet => packet.type === 'PacketInfo' && packet.data.data[0].uid === parseInt(uid),
+            1000)
+        data = data.data.data[0]
+        if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
+        if (data.shaman_exp !== undefined) data.shaman_level = shamanExperienceToLevel(data.shaman_exp)
+        if (data.name === "") data[i].name = "Без имени"
+        return data
+    } catch (e) {
+        console.log(e)
+        return null
+    }
+}
+
+async function getClan(clanId, mask) {
+    mask = mask || 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384
     try {
         let data = await executeAndWait(
             client,
             () => client.sendData('CLAN_REQUEST', [[clanId]], mask),
             'packet.incoming',
-            'PacketClanInfo',
+            function (packet) {
+                return packet.type === 'PacketClanInfo' && packet.data.data[0].id === parseInt(clanId)
+            },
             1000)
         data = data.data.data[0]
         let members = await executeAndWait(
             client,
             () => client.sendData('CLAN_GET_MEMBERS', clanId),
             'packet.incoming',
-            'PacketClanMembers',
+            function (packet) {
+                return packet.type === 'PacketClanMembers' && packet.data.clanId === parseInt(clanId)
+            },
             1000)
-        data.leader_id = await getUser(data.leader_id, 8 | 256)
+        data.leader_id = await getUser(data.leader_id, 8 | 256 | 1024)
         data.members = members.data.playerIds
-        for (let i = 0; i < data.members.length; i++) {
-            data.members[i] = await getUser(data.members[i], 8 | 256)
-        }
+        data.members = await getUser(data.members, 8 | 256 | 1024)
         data.rank.dailyPlayerExp = 0
         for (let i = 0; i < data.statistics.length; i++) {
-            data.statistics[i].uid = await getUser(data.statistics[i].uid, 8 | 256)
+            enhanced_uid = data.members.find(member => member.uid === data.statistics[i].uid)
+            data.statistics[i].uid = enhanced_uid ? enhanced_uid : { uid: data.statistics[i].uid, name: "Покинул клан" }
             data.rank.dailyPlayerExp += data.statistics[i].samples
         }
-        for (let i = 0; i < data.blacklist.length; i++) {
-            data.blacklist[i] = await getUser(data.blacklist[i], 8 | 256)
-        }
+        data.statistics.sort((a, b) => b.exp - a.exp)
+        data.blacklist = await getUser(data.blacklist, 8 | 256 | 1024)
         return data
     } catch (e) {
         console.log(e)

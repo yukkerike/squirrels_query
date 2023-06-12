@@ -1,0 +1,18 @@
+{
+  "short_name": "Squirrels Query",
+  "name": "squirrels_query",
+  "icons": [
+    {
+      "src": "https://cheat.yukkerike.ru/favicon.ico",
+      "type": "image/png",
+      "sizes": "48x48"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "background_color": "#FF0000",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#FF0000",
+  "description": "Запросы к базе данных с кроликами"
+}

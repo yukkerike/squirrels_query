@@ -7,12 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{> materialize}}
     <title>{{ name }}</title>
-    <style>
-        pre, td {
-            margin: 0 !important;
-            padding: 3px !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -25,7 +19,9 @@
             </tr>
             <tr>
                 <td>Никнейм</td>
-                <td><pre>{{ name }}</pre></td>
+                <td>
+                    <pre>{{ name }}</pre>
+                </td>
             </tr>
             <tr>
                 <td>Уровень</td>
@@ -49,7 +45,12 @@
             </tr>
             <tr>
                 <td>ID клана</td>
-                <td>{{ clan_id }}</td>
+                <td>{{#if clan_id}}
+                    <a href="/clan/{{ clan_id }}" target='_blank'>{{ clan_id }}</a>
+                    {{else}}
+                    Нет
+                    {{/if}}
+                </td>
             </tr>
             <tr>
                 <td>Давно не играл</td>
@@ -57,7 +58,7 @@
             </tr>
             <tr>
                 <td>Страница</td>
-                <td><a href="{{ profile }}">{{ profile }}</a></td>
+                <td><a href="{{ profile }}" target='_blank'>{{ profile }}</a></td>
             </tr>
             <tr>
                 <td>Дата рождения</td>
