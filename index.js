@@ -99,7 +99,7 @@ app.get('/clan/:clanId', async (req, res) => {
         statistics: clan.statistics,
         count: {
             members: clan.members.length,
-            blacklist: clan.blacklist.length
+            blacklist: clan.blacklist ? clan.blacklist.length : 0
         }
     })
 });
@@ -182,7 +182,8 @@ async function getClan(clanId, mask) {
             data.rank.dailyPlayerExp += data.statistics[i].samples
         }
         data.statistics.sort((a, b) => b.exp - a.exp)
-        data.blacklist = await getUser(data.blacklist, 8 | 256 | 1024)
+        if (data.blacklist)
+            data.blacklist = await getUser(data.blacklist, 8 | 256 | 1024)
         return data
     } catch (e) {
         console.log(e)
