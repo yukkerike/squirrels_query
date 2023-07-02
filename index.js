@@ -51,6 +51,7 @@ app.get('/user/:userId', async (req, res) => {
     const data = await getUser(userId, mask)
     if (data === null) {
         res.send('User not found')
+        return
     } else {
         let bdate = new Date(data.person_info.bdate * 1000)
         bdate = `${bdate.getUTCDate()}.${bdate.getUTCMonth() + 1}.${bdate.getUTCFullYear()}`
@@ -81,6 +82,10 @@ app.get('/clan/:clanId', async (req, res) => {
         return
     }
     const clan = await getClan(clanId)
+    if (clan === null) {
+        res.send('Clan not found')
+        return
+    }
     res.render("clan", {
         id: clan.id,
         info: clan.info,
@@ -155,7 +160,7 @@ async function getClan(clanId, mask) {
             () => client.sendData('CLAN_REQUEST', [[clanId]], mask),
             'packet.incoming',
             function (packet) {
-                return packet.type === 'PacketClanInfo' && packet.data.data[0].id === parseInt(clanId)
+                return packet.type === 'PacketClanInfo' && packet.data.data.length !==0 && packet.data.data[0].id === parseInt(clanId) 
             },
             1000)
         data = data.data.data[0]

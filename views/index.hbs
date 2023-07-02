@@ -22,7 +22,7 @@
         <div id="users" class="col s12">
             <div class="row">
                 <div class="input-field col s12">
-                  <input id="uid1" type="text" class="validate">
+                  <input id="uid1" type="text" class="validate" >
                   <label class="active" for="uid1">uid игрока</label>
                 </div>
               </div>
@@ -43,19 +43,37 @@
         </div>
     </div>
     <script>
-        var instance = M.Tabs.init(document.getElementsByClassName('tabs')[0]);
-        document.getElementById('uid1_submit').addEventListener('click', function() {
+        function submitUser() {
             var uid = document.getElementById('uid1').value;
             if (uid) {
                 window.location.href = '/user/' + uid;
             }
-        });
-        document.getElementById('uid2_submit').addEventListener('click', function() {
+        }
+        function submitClan() {
             var uid = document.getElementById('uid2').value;
             if (uid) {
                 window.location.href = '/clan/' + uid;
             }
-        });
+        }
+        document.getElementById('uid1').addEventListener("keyup", 
+            function(e) {
+                e.preventDefault();
+                if (e.keyCode === 13) {
+                    submitUser();
+                }
+            }
+        );
+        document.getElementById('uid2').addEventListener("keyup", 
+            function(e) {
+                e.preventDefault();
+                if (e.keyCode === 13) {
+                    submitClan();
+                }
+            }
+        );
+        var instance = M.Tabs.init(document.getElementsByClassName('tabs')[0]);
+        document.getElementById('uid1_submit').addEventListener('click', submitUser);
+        document.getElementById('uid2_submit').addEventListener('click', submitClan);
     </script>
 </body>
 
