@@ -1,9 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:type" content="profile" />
+    <meta name="description" content="UID: {{ uid }}
+Уровень шамана: {{ shaman_level }}
+Модератор: {{ moderator }}
+Профиль: {{ profile }}">
+    <meta property="og:title" content="Карточка игрока: {{ name }}[{{ level }}]">
+    <meta property="og:description" content="UID: {{ uid }}
+Уровень шамана: {{ shaman_level }}
+Модератор: {{ moderator }}
+Профиль: {{ profile }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="squirrelsquery.yukkerike.ru">
+    <meta name="twitter:title" content="Карточка игрока: {{ name }}[{{ level }}]">
+    <meta name="twitter:description" content="UID: {{ uid }}
+Уровень шамана: {{ shaman_level }}
+Модератор: {{ moderator }}
+Профиль: {{ profile }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{> materialize}}
     <title>{{ name }}</title>

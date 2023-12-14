@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:type" content="profile" />
+    <meta name="description" content="ID: {{ id }}
+Уровень: {{ rank.level }}
+Вождь: {{ leader_id.name }}[{{leader_id.level}}]
+Новость: {{ news }}">
+    <meta property="og:url" content="https://squirrelsquery.yukkerike.ru/clan/162381">
+    <meta property="og:title" content="Карточка клана: {{ info.name }}">
+    <meta property="og:description" content="ID: {{ id }}
+Уровень: {{ rank.level }}
+Вождь: {{ leader_id.name }}[{{leader_id.level}}]
+Новость: {{ news }}">
+    <meta property="og:image" content="{{ info.photo }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="squirrelsquery.yukkerike.ru">
+    <meta name="twitter:title" content="Карточка клана: {{ info.name }}">
+    <meta name="twitter:description" content="ID: {{ id }}
+Уровень: {{ rank.level }}
+Вождь: {{ leader_id.name }}[{{leader_id.level}}]
+Новость: {{ news }}">
+    <meta name="twitter:image" content="{{ info.photo }}">
     {{> materialize}}
     <title>{{ info.name }}</title>
 </head>
@@ -31,7 +51,9 @@
             </tr>
             <tr>
                 <td>Вождь</td>
-                <td><a href="/user/{{ leader_id.uid }}" target='_blank'><pre>{{ leader_id.name }}[{{leader_id.level}}]</pre></a></td>
+                <td><a href="/user/{{ leader_id.uid }}" target='_blank'>
+                        <pre>{{ leader_id.name }}[{{leader_id.level}}]</pre>
+                    </a></td>
             </tr>
             <tr>
                 <td>Новость</td>
@@ -66,7 +88,9 @@
                             <tr>
                                 <td>{{ inc @index}}</td>
                                 <td>
-                                    <a href="/user/{{ this.uid.uid }}" target='_blank'><pre>{{ this.uid.name }}[{{ this.uid.level }}]</pre></a>
+                                    <a href="/user/{{ this.uid.uid }}" target='_blank'>
+                                        <pre>{{ this.uid.name }}[{{ this.uid.level }}]</pre>
+                                    </a>
                                 </td>
                                 <td>{{ this.samples }}</td>
                                 <td>{{ this.exp }}</td>
@@ -76,7 +100,7 @@
                                 <td></td>
                                 <td>Всего</td>
                                 <td>{{ rank.dailyPlayerExp }}</td>
-                                <td>{{ rank.dailyExp }}</td>
+                                <td>{{ rank.dailyTotalExp }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -85,9 +109,11 @@
             <tr>
                 <td>Члены клана ({{ count.members }})</td>
                 <td>
-                    <div class="collection">
+                    <div>
                         {{#each members}}
-                        <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'><pre>{{ this.name }}[{{ this.level }}]</pre></a>
+                        <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'>
+                            <pre>{{ this.name }}[{{ this.level }}]</pre>
+                        </a>
                         {{/each}}
                     </div>
                 </td>
@@ -95,9 +121,11 @@
             <tr>
                 <td>Чёрный список ({{ count.blacklist }})</td>
                 <td>
-                    <div class="collection">
+                    <div>
                         {{#each blacklist}}
-                        <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'><pre>{{ this.name }}[{{ this.level }}]</pre></a>
+                        <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'>
+                            <pre>{{ this.name }}[{{ this.level }}]</pre>
+                        </a>
                         {{/each}}
                     </div>
                 </td>

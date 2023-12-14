@@ -1,6 +1,5 @@
 const express = require('express')
 const hbs = require("hbs");
-const rateLimit = require('express-rate-limit')
 const {
     executeAndWait,
     composeLogin,
@@ -11,14 +10,6 @@ const {
 const path = require('path')
 
 const app = express()
-const port = 3000 || process.env.PORT
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 200,
-    standardHeaders: true,
-    legacyHeaders: false,
-})
-app.use(limiter)
 app.set("view engine", "hbs")
 hbs.registerPartials(path.join(__dirname, "views", "partials"));
 hbs.registerHelper("inc", function (value, options) { return parseInt(value) + 1 });
@@ -40,6 +31,10 @@ app.get('/sw.js', (req, res) => {
     res.sendFile(path.join(__dirname, "sw.js"))
 })
 
+app.get('/user', (req, res) => {
+    res.redirect(`/user/${req.query.uid}`)
+})
+
 app.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId
     if (req.query.json === "") {
@@ -50,7 +45,7 @@ app.get('/user/:userId', async (req, res) => {
     const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536
     const data = await getUser(userId, mask)
     if (data === null) {
-        res.send('User not found')
+        res.send(`<html><head><meta http-equiv="refresh" content="2;url=/"></head><body>User not found</body></html>`)
         return
     } else {
         let bdate = new Date(data.person_info.bdate * 1000)
@@ -74,6 +69,10 @@ app.get('/user/:userId', async (req, res) => {
     }
 });
 
+app.get('/clan', (req, res) => {
+    res.redirect(`/clan/${req.query.id}`)
+})
+
 app.get('/clan/:clanId', async (req, res) => {
     const clanId = req.params.clanId
     if (req.query.json === "") {
@@ -83,7 +82,7 @@ app.get('/clan/:clanId', async (req, res) => {
     }
     const clan = await getClan(clanId)
     if (clan === null) {
-        res.send('Clan not found')
+        res.send(`<html><head><meta http-equiv="refresh" content="2;url=/"></head><body>Clan not found</body></html>`)
         return
     }
     res.render("clan", {
@@ -108,7 +107,9 @@ app.get('*', (req, res) => {
     res.redirect('/')
 })
 
-app.listen(port, () => console.log(`Сервер запущен на порте ${port}`))
+let port = [process.env.PORT || 3000]
+
+app.listen(...port, () => console.log(`Сервер запущен на порте ${port}`))
 
 async function getUsers(uids, mask) {
     try {
@@ -176,10 +177,12 @@ async function getClan(clanId, mask) {
         data.members = members.data.playerIds
         data.members = await getUser(data.members, 8 | 256 | 1024)
         data.rank.dailyPlayerExp = 0
+        data.rank.dailyTotalExp = 0
         for (let i = 0; i < data.statistics.length; i++) {
             enhanced_uid = data.members.find(member => member.uid === data.statistics[i].uid)
             data.statistics[i].uid = enhanced_uid ? enhanced_uid : { uid: data.statistics[i].uid, name: "Покинул клан" }
             data.rank.dailyPlayerExp += data.statistics[i].samples
+            data.rank.dailyTotalExp += data.statistics[i].exp
         }
         data.statistics.sort((a, b) => b.exp - a.exp)
         if (data.blacklist)

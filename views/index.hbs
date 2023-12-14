@@ -1,80 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    {{> materialize}}
     <title>squirrels_query</title>
+    {{> materialize}}
+    <style>
+        .ct {
+            border: 1px #eee solid;
+            width: 100%;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 900px;
+            background-color: #f8f9fa !important;
+            color: #212529;
+        }
+
+        .tabs_hack {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .tabs-wrapper {
+            border: 1px solid #d3d3d3;
+            max-width: 100%;
+            margin: 10px auto;
+            display: flex;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .content {
+            width: 100%;
+            display: none;
+            padding: 15px;
+            background-color: #eee;
+            padding-bottom: 0;
+        }
+
+        .tab {
+            text-align: center;
+            padding: 10px;
+            flex-grow: 1;
+        }
+
+        #tab-1:checked~.tab-1,
+        #tab-2:checked~.tab-2 {
+            background-color: #eee;
+        }
+
+        #tab-1:checked~.content-1,
+        #tab-2:checked~.content-2 {
+            display: block;
+        }
+
+        .tab:hover {
+            background-color: #d1d1d1;
+        }
+
+        input {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        input[type=submit] {
+            width: 100px;
+            background: #275fae;
+            color: white;
+            border: 0 none;
+            border-radius: 1px;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px 5px;
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #27AE60;
+        }
+
+        form {
+            width: 30%;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
-    {{> navbar}}
-    <div class="row">
-        <div class="col s12">
-            <ul class="tabs">
-                <li class="tab col s6"><a href="#users">Игроки</a></li>
-                <li class="tab col s6"><a href="#clans">Кланы</a></li>
-            </ul>
+    <div class="ct">
+        {{> navbar}}
+        <div class="tabs-wrapper">
+            <input class="tabs_hack" id="tab-1" name="tabs" type="radio" checked>
+            <input class="tabs_hack" id="tab-2" name="tabs" type="radio">
+            <label class="tab tab-1" for="tab-1">Игроки</label>
+            <label class="tab tab-2" for="tab-2">Кланы</label>
+            <div class="content content-1">
+                <form action="/user/" method="get">
+                    <input name="uid" placeholder="UID игрока" type="text">
+                    <input type="submit" value="Найти">
+                </form>
+            </div>
+            <div class="content content-2">
+                <form action="/clan/" method="get">
+                    <input name="id" placeholder="ID клана" type="text">
+                    <input type="submit" value="Найти">
+                </form>
+            </div>
         </div>
-        <div id="users" class="col s12">
-            <div class="row">
-                <div class="input-field col s12">
-                  <input id="uid1" type="text" class="validate" >
-                  <label class="active" for="uid1">uid игрока</label>
-                </div>
-              </div>
-              <button class="btn waves-effect waves-light" type="submit" name="action" id="uid1_submit">Получить
-                <i class="material-icons right">send</i>
-              </button>
-        </div>
-        <div id="clans" class="col s12">
-            <div class="row">
-                <div class="input-field col s12">
-                  <input id="uid2" type="text" class="validate">
-                  <label class="active" for="uid2">id клана</label>
-                </div>
-              </div>
-              <button class="btn waves-effect waves-light" type="submit" name="action" id="uid2_submit">Получить
-                <i class="material-icons right">send</i>
-              </button>
-        </div>
+        <a href="https://stats.uptimerobot.com/hfhWlNPNqP" target='_blank'>Проверить работу сервера можно по ссылке.</a>
+        <p>Для получения информации в машиночитаемом формате добавьте ?json в конец url.</p>
     </div>
-    <script>
-        function submitUser() {
-            var uid = document.getElementById('uid1').value;
-            if (uid) {
-                window.location.href = '/user/' + uid;
-            }
-        }
-        function submitClan() {
-            var uid = document.getElementById('uid2').value;
-            if (uid) {
-                window.location.href = '/clan/' + uid;
-            }
-        }
-        document.getElementById('uid1').addEventListener("keyup", 
-            function(e) {
-                e.preventDefault();
-                if (e.keyCode === 13) {
-                    submitUser();
-                }
-            }
-        );
-        document.getElementById('uid2').addEventListener("keyup", 
-            function(e) {
-                e.preventDefault();
-                if (e.keyCode === 13) {
-                    submitClan();
-                }
-            }
-        );
-        var instance = M.Tabs.init(document.getElementsByClassName('tabs')[0]);
-        document.getElementById('uid1_submit').addEventListener('click', submitUser);
-        document.getElementById('uid2_submit').addEventListener('click', submitClan);
-    </script>
 </body>
 
 </html>
