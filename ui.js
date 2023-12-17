@@ -28,12 +28,12 @@ app.get('/sw.js', (req, res) => {
 })
 
 app.get('/user', (req, res) => {
-    console.log("/user/" + req.query.uid)
     res.redirect(`/user/${req.query.uid}`)
 })
 
 app.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId
+    console.log("/user/" + userId + (req.query.json === "" && ".json"))
     if (req.query.json === "") {
         const data = await getUser(userId, 4190175)
         res.json(data)
@@ -68,12 +68,12 @@ app.get('/user/:userId', async (req, res) => {
 });
 
 app.get('/clan', (req, res) => {
-    console.log("/clan/" + req.query.id)
     res.redirect(`/clan/${req.query.id}`)
 })
 
 app.get('/clan/:clanId', async (req, res) => {
     const clanId = req.params.clanId
+    console.log("/clan/" + clanId + (req.query.json === "" && ".json"))
     if (req.query.json === "") {
         const clan = await getClan(clanId, 65535)
         res.json(clan)
