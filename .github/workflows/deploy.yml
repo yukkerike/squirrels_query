@@ -1,0 +1,47 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Yandex Cloud Container Registry
+        id: login-cr
+        uses: yc-actions/yc-cr-login@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          CR_REGISTRY: crpunrjbuup33ugn5q54
+          CR_REPOSITORY: squirrelsquery
+        run: |
+          docker build . -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY --file Dockerfile
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY
+
+      - name: Deploy Serverless Container
+        id: deploy-sls-container
+        uses: yc-actions/yc-sls-container-deploy@v2
+        env:
+          CR_REGISTRY: crpunrjbuup33ugn5q54
+          CR_REPOSITORY: squirrelsquery
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          container-name: squirrelsquery
+          folder-id: bbadshrh93dqut5hkg6k
+          revision-service-account-id: ajeunnejdm7jnb3fkc1f
+          revision-cores: 1
+          revision-memory: 128Mb
+          revision-core-fraction: 5
+          revision-concurrency: 16
+          revision-image-url: cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:CR_REPOSITORY
+          revision-execution-timeout: 10
+          revision-working-dir: /usr/src/app
+          revision-network-id: enp01bv6bibq2up3p5ot
+          revision-env: TOKEN=${{ secrets.TOKEN }}
