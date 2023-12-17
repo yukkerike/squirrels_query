@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,7 +19,6 @@
   "homepage": "https://github.com/yukkerike/squirrels_query#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "express-rate-limit": "^6.7.0",
     "hbs": "^4.2.0",
     "sq-lib": "github:isoviet/sq-lib"
   }

@@ -1,6 +1,7 @@
-const {GameClient} = require("sq-lib");
+import sqlib from "sq-lib"
+const { GameClient } = sqlib
 
-module.exports = function (host, ports) {
+export default function (host, ports) {
     let client = new GameClient({
         port: ports[Math.floor(Math.random() * ports.length)],
         host: host

@@ -64,4 +64,4 @@ function composeLogin(token) {
     return result
 }
 
-module.exports = composeLogin
+export default composeLogin
