@@ -72,8 +72,12 @@ async function getClan(clanId, mask) {
         data.rank.dailyPlayerExp = 0
         data.rank.dailyTotalExp = 0
         for (let i = 0; i < data.statistics.length; i++) {
-            enhanced_uid = data.members.find(member => member.uid === data.statistics[i].uid)
-            data.statistics[i].uid = enhanced_uid ? enhanced_uid : { uid: data.statistics[i].uid, name: "Покинул клан" }
+            data.statistics[i].uid = data.members.find(member => member.uid === data.statistics[i].uid) 
+                || 
+                { 
+                    uid: data.statistics[i].uid, 
+                    name: "Покинул клан" 
+                }
             data.rank.dailyPlayerExp += data.statistics[i].samples
             data.rank.dailyTotalExp += data.statistics[i].exp
         }
