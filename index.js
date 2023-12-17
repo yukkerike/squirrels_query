@@ -27,6 +27,10 @@ app.get('/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, "manifest.json"))
 })
 
+app.get('/main.css', (req, res) => {
+    res.sendFile(path.join(__dirname, "main.css"))
+})
+
 app.get('/sw.js', (req, res) => {
     res.sendFile(path.join(__dirname, "sw.js"))
 })
@@ -45,6 +49,7 @@ app.get('/user/:userId', async (req, res) => {
     const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536
     const data = await getUser(userId, mask)
     if (data === null) {
+        res.status(404)
         res.send(`<html><head><meta http-equiv="refresh" content="2;url=/"></head><body>User not found</body></html>`)
         return
     } else {
@@ -82,6 +87,7 @@ app.get('/clan/:clanId', async (req, res) => {
     }
     const clan = await getClan(clanId)
     if (clan === null) {
+        res.status(404)
         res.send(`<html><head><meta http-equiv="refresh" content="2;url=/"></head><body>Clan not found</body></html>`)
         return
     }
@@ -128,7 +134,7 @@ async function getUsers(uids, mask) {
         }
         return data
     } catch (e) {
-        console.log(e)
+        console.error(e)
         return null
     }
 }
@@ -148,7 +154,7 @@ async function getUser(uid, mask) {
         if (data.name === "") data[i].name = "Без имени"
         return data
     } catch (e) {
-        console.log(e)
+        console.error(e)
         return null
     }
 }
@@ -189,7 +195,7 @@ async function getClan(clanId, mask) {
             data.blacklist = await getUser(data.blacklist, 8 | 256 | 1024)
         return data
     } catch (e) {
-        console.log(e)
+        console.error(e)
         return null
     }
 }
@@ -223,12 +229,11 @@ function login(token) {
             client.sendData('PING', 0)
         }, 30000)
     }
-    const handleClose = function (client) {
-        console.log('Client closed')
-        client = login(token)
-    }
     client.on('client.connect', () => handleConnect(client))
     client.on('packet.incoming', (packet, buffer) => handlePacket(client, packet, buffer))
-    client.on('client.close', () => handleClose(client))
+    client.on('client.close', () => {
+        console.error('Client closed')
+        process.exit(1)
+    })
     client.open()
 }

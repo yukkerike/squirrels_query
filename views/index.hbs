@@ -8,22 +8,6 @@
     <title>squirrels_query</title>
     {{> materialize}}
     <style>
-        .ct {
-            border: 1px #eee solid;
-            width: 100%;
-            padding: 15px;
-            margin: 0 auto;
-            max-width: 900px;
-            background-color: #f8f9fa !important;
-            color: #212529;
-        }
-
-        @media screen and (min-width:900px) {
-            .ct {
-                margin: 20px auto;
-            }
-        }
-
         .tabs_hack {
             opacity: 0;
             position: absolute;
@@ -68,33 +52,26 @@
             background-color: #d1d1d1;
         }
 
+        form {
+            text-align: center; 
+        }
+
         input {
             padding: 15px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
-            border-radius: 3px;
-            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 13px;
         }
 
         input[type=submit] {
-            width: 100px;
             background: #275fae;
             color: white;
-            border: 0 none;
-            border-radius: 1px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px 5px;
         }
 
         input:focus {
             box-shadow: 0 0 0 2px white, 0 0 0 3px #27AE60;
-        }
-
-        form {
-            width: 30%;
-            margin: 0 auto;
-            text-align: center;
         }
     </style>
 </head>

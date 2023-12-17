@@ -1,5 +1,5 @@
-FROM node:current-slim
-COPY . /app
-WORKDIR /app
+FROM gcr.io/distroless/nodejs20-debian12
+COPY . /usr/src/app
+WORKDIR /usr/src/app
 ENV TOKEN=""
-CMD ["node", "index.js"]
+CMD ["index.js"]

@@ -27,74 +27,76 @@
 </head>
 
 <body>
-    {{> navbar}}
-    <table>
-        <tbody>
-            <tr>
-                <td>UID</td>
-                <td>{{ uid }}</td>
-            </tr>
-            <tr>
-                <td>Никнейм</td>
-                <td>
-                    <pre>{{ name }}</pre>
-                </td>
-            </tr>
-            <tr>
-                <td>Уровень</td>
-                <td>{{ level }}</td>
-            </tr>
-            <tr>
-                <td>Уровень шамана</td>
-                <td>{{ shaman_level }}</td>
-            </tr>
-            <tr>
-                <td>Модератор</td>
-                <td>{{ moderator }}</td>
-            </tr>
-            <tr>
-                <td>Онлайн</td>
-                <td>{{ online }}</td>
-            </tr>
-            <tr>
-                <td>Пол</td>
-                <td>{{ sex }}</td>
-            </tr>
-            <tr>
-                <td>ID клана</td>
-                <td>{{#if clan_id}}
-                    <a href="/clan/{{ clan_id }}" target='_blank'>{{ clan_id }}</a>
-                    {{else}}
-                    Нет
-                    {{/if}}
-                </td>
-            </tr>
-            <tr>
-                <td>Давно не играл</td>
-                <td>{{ is_gone }}</td>
-            </tr>
-            <tr>
-                <td>Страница</td>
-                <td><a href="{{ profile }}" target='_blank'>{{ profile }}</a></td>
-            </tr>
-            <tr>
-                <td>Дата рождения</td>
-                <td>{{ bdate }}</td>
-            </tr>
-            <tr>
-                <td>Есть VIP</td>
-                <td>{{ vip_exist }}</td>
-            </tr>
-            <tr>
-                <td>Опыт</td>
-                <td>{{ exp }}</td>
-            </tr>
-            <tr>
-                <td>Опыт шамана</td>
-                <td>{{ shaman_exp }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="ct">
+        {{> navbar}}
+        <table>
+            <tbody>
+                <tr>
+                    <td>UID</td>
+                    <td>{{ uid }}</td>
+                </tr>
+                <tr>
+                    <td>Никнейм</td>
+                    <td>
+                        <pre>{{ name }}</pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Уровень</td>
+                    <td>{{ level }}</td>
+                </tr>
+                <tr>
+                    <td>Уровень шамана</td>
+                    <td>{{ shaman_level }}</td>
+                </tr>
+                <tr>
+                    <td>Модератор</td>
+                    <td>{{ moderator }}</td>
+                </tr>
+                <tr>
+                    <td>Онлайн</td>
+                    <td>{{ online }}</td>
+                </tr>
+                <tr>
+                    <td>Пол</td>
+                    <td>{{ sex }}</td>
+                </tr>
+                <tr>
+                    <td>ID клана</td>
+                    <td>{{#if clan_id}}
+                        <a href="/clan/{{ clan_id }}" target='_blank'>{{ clan_id }}</a>
+                        {{else}}
+                        Нет
+                        {{/if}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Давно не играл</td>
+                    <td>{{ is_gone }}</td>
+                </tr>
+                <tr>
+                    <td>Страница</td>
+                    <td><a href="{{ profile }}" target='_blank'>{{ profile }}</a></td>
+                </tr>
+                <tr>
+                    <td>Дата рождения</td>
+                    <td>{{ bdate }}</td>
+                </tr>
+                <tr>
+                    <td>Есть VIP</td>
+                    <td>{{ vip_exist }}</td>
+                </tr>
+                <tr>
+                    <td>Опыт</td>
+                    <td>{{ exp }}</td>
+                </tr>
+                <tr>
+                    <td>Опыт шамана</td>
+                    <td>{{ shaman_exp }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 
 </html>
