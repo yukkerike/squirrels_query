@@ -1,4 +1,4 @@
-import app from './ui.js'
+import app from './app/ui.js'
 
 let port = [process.env.PORT || 3000]
 app.listen(...port, () => console.log(`Сервер запущен на порте ${port}`))
