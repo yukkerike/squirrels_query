@@ -9,7 +9,7 @@ function queryStringToObject(queryString) {
 
 function composeLogin(token) {
     const session = queryStringToObject(token)
-    let id, netType, key, tag = 3, ref, result = []
+    let id, netType, key, tag = 4, ref, result = []
     let OAuth = session.OAuth ? 1 : 0
     let socialFrameToken = session.config ? 1 : 0
     if (!socialFrameToken) {
@@ -20,10 +20,10 @@ function composeLogin(token) {
                 key = session.authKey
                 ref = -1
                 break
-                case 'ok':
-                    key = session.auth_sig
-                    ref = 20000
-                    break
+            case 'ok':
+                key = session.auth_sig
+                ref = 20000
+                break
             case 'vk':
                 key = ""
                 ref = 0
