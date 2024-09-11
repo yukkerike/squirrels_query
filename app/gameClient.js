@@ -38,7 +38,7 @@ async function getUser(uid, mask) {
         data = data.data.data[0]
         if (data.exp !== undefined) data.level = experienceToLevel(data.exp)
         if (data.shaman_exp !== undefined) data.shaman_level = shamanExperienceToLevel(data.shaman_exp)
-        if (data.name === "") data[i].name = "Без имени"
+        if (data.name === "") data.name = "Без имени"
         return data
     } catch (e) {
         console.error(e)
