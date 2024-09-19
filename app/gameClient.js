@@ -47,7 +47,7 @@ async function getUser(uid, mask) {
 }
 
 async function getClan(clanId, mask) {
-    mask = mask || 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384
+    mask = mask || 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384 | 32768
     try {
         let data = await executeAndWait(
             client,
@@ -71,6 +71,7 @@ async function getClan(clanId, mask) {
         data.members = await getUser(data.members, 8 | 256 | 1024)
         data.rank.dailyPlayerExp = 0
         data.rank.dailyTotalExp = 0
+        data.rank.DailyTotalRaiting = 0
         for (let i = 0; i < data.statistics.length; i++) {
             data.statistics[i].uid = data.members.find(member => member.uid === data.statistics[i].uid) 
                 || 
@@ -80,6 +81,7 @@ async function getClan(clanId, mask) {
                 }
             data.rank.dailyPlayerExp += data.statistics[i].samples
             data.rank.dailyTotalExp += data.statistics[i].exp
+            data.rank.DailyTotalRaiting += data.statistics[i].clan_rating
         }
         data.statistics.sort((a, b) => b.exp - a.exp)
         if (data.blacklist)

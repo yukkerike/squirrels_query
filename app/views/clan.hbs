@@ -80,6 +80,10 @@
                     <td>{{ rank.exp }}</td>
                 </tr>
                 <tr>
+                    <td>Рейтинг за период</td>
+                    <td>{{ rating_score }}</td>
+                </tr>
+                <tr>
                     <td colspan="2">
                         Статистика за прошедшие сутки
                         <table>
@@ -89,6 +93,7 @@
                                     <td>Игрок</td>
                                     <td>Опыт игрока</td>
                                     <td>Опыт клана</td>
+                                    <td>Очки рейтинга</td>
                                 </tr>
                                 {{#each statistics}}
                                 <tr>
@@ -100,6 +105,7 @@
                                     </td>
                                     <td>{{ this.samples }}</td>
                                     <td>{{ this.exp }}</td>
+                                    <td>{{ this.clan_rating }}</td>
                                 </tr>
                                 {{/each}}
                                 <tr>
@@ -107,6 +113,7 @@
                                     <td>Всего</td>
                                     <td>{{ rank.dailyPlayerExp }}</td>
                                     <td>{{ rank.dailyTotalExp }}</td>
+                                    <td>{{ rank.DailyTotalRaiting }}</td>
                                 </tr>
                             </tbody>
                         </table>
