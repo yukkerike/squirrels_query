@@ -12,6 +12,7 @@ body {
     margin: 0 auto;
     background-color: #f8f9fa !important;
     color: #212529;
+    min-width: 540px;
 }
 
 @media screen and (min-width:600px) {
