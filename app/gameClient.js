@@ -28,6 +28,7 @@ async function getUsers(uids, mask) {
 
 async function getUser(uid, mask) {
     try {
+        if(!uid) return null
         if (Array.isArray(uid)) return await getUsers(uid, mask)
         let data = await executeAndWait(
             client,
@@ -49,26 +50,29 @@ async function getUser(uid, mask) {
 async function getClan(clanId, mask) {
     mask = mask || 1 | 2 | 4 | 32 | 256 | 4096 | 8192 | 16384 | 32768
     try {
-        let data = await executeAndWait(
-            client,
-            () => client.sendData('CLAN_REQUEST', [[clanId]], mask),
-            'packet.incoming',
-            function (packet) {
-                return packet.type === 'PacketClanInfo' && packet.data.data.length !== 0 && packet.data.data[0].id === parseInt(clanId)
-            },
-            1000)
+        let [data, membersIds] = await Promise.all([
+            executeAndWait(
+                client,
+                () => client.sendData('CLAN_REQUEST', [[clanId]], mask),
+                'packet.incoming',
+                packet => packet.type === 'PacketClanInfo' && packet.data.data.length !== 0 && packet.data.data[0].id === parseInt(clanId),
+                1000),
+            executeAndWait(
+                client,
+                () => client.sendData('CLAN_GET_MEMBERS', clanId),
+                'packet.incoming',
+                packet => packet.type === 'PacketClanMembers' && packet.data.clanId === parseInt(clanId),
+                1000)
+        ])
         data = data.data.data[0]
-        let members = await executeAndWait(
-            client,
-            () => client.sendData('CLAN_GET_MEMBERS', clanId),
-            'packet.incoming',
-            function (packet) {
-                return packet.type === 'PacketClanMembers' && packet.data.clanId === parseInt(clanId)
-            },
-            1000)
-        data.leader_id = await getUser(data.leader_id, 8 | 256 | 1024)
-        data.members = members.data.playerIds
-        data.members = await getUser(data.members, 8 | 256 | 1024)
+        const userData = await Promise.all([
+            getUser(data.leader_id, 8 | 256 | 1024),
+            getUser(membersIds.data.playerIds, 8 | 256 | 1024),
+            getUser(data.blacklist, 8 | 256 | 1024)
+        ])
+        data.leader_id = userData[0];
+        data.members = userData[1];
+        data.blacklist = userData[2];
         data.rank.dailyPlayerExp = 0
         data.rank.dailyTotalExp = 0
         data.rank.DailyTotalRaiting = 0
@@ -84,8 +88,6 @@ async function getClan(clanId, mask) {
             data.rank.DailyTotalRaiting += data.statistics[i].clan_rating
         }
         data.statistics.sort((a, b) => b.exp - a.exp)
-        if (data.blacklist)
-            data.blacklist = await getUser(data.blacklist, 8 | 256 | 1024)
         return data
     } catch (e) {
         console.error(e)
