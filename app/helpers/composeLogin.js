@@ -52,10 +52,10 @@ function composeLogin(token) {
                 id = BigInt(session.vid)
                 netType = 1
                 key = session.authentication_key
-                ref = 10011
+                ref = 10000
         }
     }
-    result = [id, netType, OAuth, key, tag, ref]
+    result = [netType, OAuth, id, key, tag, ref]
     if (!socialFrameToken)
         if (session.useApiType !== 'sa')
             result.push(session.token)

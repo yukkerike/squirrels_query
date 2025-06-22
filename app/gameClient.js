@@ -28,7 +28,7 @@ async function getUsers(uids, mask) {
 
 async function getUser(uid, mask) {
     try {
-        if(!uid) return null
+        if (!uid) return null
         if (Array.isArray(uid)) return await getUsers(uid, mask)
         let data = await executeAndWait(
             client,
@@ -70,19 +70,19 @@ async function getClan(clanId, mask) {
             getUser(membersIds.data.playerIds, 8 | 256 | 1024),
             getUser(data.blacklist, 8 | 256 | 1024)
         ])
-        data.leader_id = userData[0];
-        data.members = userData[1];
-        data.blacklist = userData[2];
+        data.leader_id = userData[0]
+        data.members = userData[1]
+        data.blacklist = userData[2]
         data.rank.dailyPlayerExp = 0
         data.rank.dailyTotalExp = 0
         data.rank.DailyTotalRaiting = 0
         for (let i = 0; i < data.statistics.length; i++) {
-            data.statistics[i].uid = data.members.find(member => member.uid === data.statistics[i].uid) 
-                || 
-                { 
-                    uid: data.statistics[i].uid, 
-                    name: "Покинул клан" 
-                }
+            data.statistics[i].uid = data.members.find(member => member.uid === data.statistics[i].uid)
+                ||
+            {
+                uid: data.statistics[i].uid,
+                name: "Покинул клан"
+            }
             data.rank.dailyPlayerExp += data.statistics[i].samples
             data.rank.dailyTotalExp += data.statistics[i].exp
             data.rank.DailyTotalRaiting += data.statistics[i].clan_rating

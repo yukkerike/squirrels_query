@@ -33,7 +33,7 @@ app.get('/user', (req, res) => {
 
 app.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId
-    console.log("/user/" + userId + (req.query.json === "" && ".json"))
+    console.log("/user/" + userId + (req.query.json === "" && ".json" || ""))
     if (req.query.json === "") {
         const data = await getUser(userId, 4194303)
         res.json(data)
@@ -73,7 +73,7 @@ app.get('/clan', (req, res) => {
 
 app.get('/clan/:clanId', async (req, res) => {
     const clanId = req.params.clanId
-    console.log("/clan/" + clanId + (req.query.json === "" && ".json"))
+    console.log("/clan/" + clanId + (req.query.json === "" && ".json" || ""))
     if (req.query.json === "") {
         const clan = await getClan(clanId, 262143)
         res.json(clan)
@@ -93,7 +93,7 @@ app.get('/clan/:clanId', async (req, res) => {
         rank: clan.rank,
         ban: clan.ban ? "Да" : "Нет",
         level_limiter: clan.level_limiter,
-        rating_score: clan.rating_info.rating_score,
+        rating_score: clan.rating_info,
         members: clan.members,
         blacklist: clan.blacklist,
         statistics: clan.statistics,
