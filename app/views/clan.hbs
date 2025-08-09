@@ -1,152 +1,98 @@
 <!DOCTYPE html>
-<html lang="ru">
-
+<html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=560px, initial-scale=1.0">
-    <meta property="og:type" content="profile" />
-    <meta name="description" content="ID: {{ id }}
-Уровень: {{ rank.level }}
-Вождь: {{ leader_id.name }}[{{leader_id.level}}]
-Новость: {{ news }}">
-    <meta property="og:url" content="https://squirrelsquery.yukkerike.ru/clan/162381">
-    <meta property="og:title" content="Карточка клана: {{ info.name }}">
-    <meta property="og:description" content="ID: {{ id }}
-Уровень: {{ rank.level }}
-Вождь: {{ leader_id.name }}[{{leader_id.level}}]
-Новость: {{ news }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="{{ info.name }} (ID {{ id }})">
+    <meta property="og:description" content="Уровень {{ rank.level }} • Лидер {{ leader_id.name }}">
     <meta property="og:image" content="{{ info.photo }}">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="squirrelsquery.yukkerike.ru">
-    <meta name="twitter:title" content="Карточка клана: {{ info.name }}">
-    <meta name="twitter:description" content="ID: {{ id }}
-Уровень: {{ rank.level }}
-Вождь: {{ leader_id.name }}[{{leader_id.level}}]
-Новость: {{ news }}">
-    <meta name="twitter:image" content="{{ info.photo }}">
-    {{> materialize}}
-    <style>
-        .ct > table > tbody > tr:nth-last-child(-n+2) > td {
-            border-top: 1px solid #00000012;
-        }
-    </style>
-    <title>{{ info.name }}</title>
+    {{> styles}}
+    <title>{{ info.name }} — клан</title>
 </head>
-
 <body>
     <div class="ct">
         {{> navbar}}
-        <table>
-            <tbody>
-                <tr>
-                    <td>ID</td>
-                    <td>{{ id }}</td>
-                </tr>
-                <tr>
-                    <td>Название</td>
-                    <td>{{ info.name }}</td>
-                </tr>
-                <tr>
-                    <td>Эмблема</td>
-                    <td><img src="{{ info.emblem }}" /><img src="{{ info.photo }}" /></td>
-                </tr>
-                <tr>
-                    <td>В бане</td>
-                    <td>{{ ban }}</td>
-                </tr>
-                <tr>
-                    <td>Вождь</td>
-                    <td><a href="/user/{{ leader_id.uid }}" target='_blank'>
-                            <pre>{{ leader_id.name }}[{{leader_id.level}}]</pre>
-                        </a></td>
-                </tr>
-                <tr>
-                    <td>Новость</td>
-                    <td>
-                        <pre style="white-space: pre-wrap; overflow-wrap: anywhere; max-width: 380px">{{ news }}</pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Уровень</td>
-                    <td>{{ rank.level }}</td>
-                </tr>
-                <tr>
-                    <td>Лимит уровня</td>
-                    <td>{{ level_limiter }}</td>
-                </tr>
-                <tr>
-                    <td>Опыт</td>
-                    <td>{{ rank.exp }}</td>
-                </tr>
-                <tr>
-                    <td>Рейтинг за период</td>
-                    <td>{{ rating_score }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        Статистика за прошедшие сутки
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td>Игрок</td>
-                                    <td>Опыт игрока</td>
-                                    <td>Опыт клана</td>
-                                    <td>Очки рейтинга</td>
-                                </tr>
-                                {{#each statistics}}
-                                <tr>
-                                    <td>{{ inc @index}}</td>
-                                    <td>
-                                        <a href="/user/{{ this.uid.uid }}" target='_blank'>
-                                            <pre>{{ this.uid.name }}[{{ this.uid.level }}]</pre>
-                                        </a>
-                                    </td>
-                                    <td>{{ this.samples }}</td>
-                                    <td>{{ this.exp }}</td>
-                                    <td>{{ this.clan_rating }}</td>
-                                </tr>
-                                {{/each}}
-                                <tr>
-                                    <td></td>
-                                    <td>Всего</td>
-                                    <td>{{ rank.dailyPlayerExp }}</td>
-                                    <td>{{ rank.dailyTotalExp }}</td>
-                                    <td>{{ rank.DailyTotalRaiting }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        Члены клана ({{ count.members }})
-                        <div>
-                            {{#each members}}
-                            <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'>
-                                <pre>{{ this.name }}[{{ this.level }}]</pre>
-                            </a>
+        <div class="grid">
+            <div class="panel">
+                <h2>Клан</h2>
+                <div class="badges">
+                    {{#if ban}}<span class="badge badge-ban">Бан</span>{{/if}}
+                </div>
+                <ul class="meta-list">
+                    <li class="meta-item"><span class="label">ID</span><span>{{ id }}</span></li>
+                    <li class="meta-item"><span class="label">Название</span><span>{{ info.name }}</span></li>
+                    <li class="meta-item"><span class="label">Уровень</span><span>{{ rank.level }}</span></li>
+                    <li class="meta-item"><span class="label">Лимит уровня</span><span>{{ level_limiter }}</span></li>
+                    <li class="meta-item"><span class="label">Опыт</span><span>{{ rank.exp }}</span></li>
+                    <li class="meta-item"><span class="label">Рейтинг за период</span><span>{{ rating_score }}</span></li>
+                    <li class="meta-item"><span class="label">Лидер</span><span><a href="/user/{{ leader_id.uid }}" target="_blank" rel="noopener">{{ leader_id.name }}[{{ leader_id.level }}]</a></span></li>
+                </ul>
+                <div style="margin-top:1rem;">
+                    <p class="section-title" style="margin-bottom:.3rem;">Эмблемы</p>
+                    <div class="emblems">
+                        <img src="{{ info.emblem }}" alt="emblem" />
+                        <img src="{{ info.photo }}" alt="photo" />
+                    </div>
+                </div>
+                <div style="margin-top:1rem;">
+                    <p class="section-title" style="margin-bottom:.3rem;">Новость</p>
+                    <pre style="white-space:pre-wrap; overflow-wrap:anywhere; font-size:.75rem; margin:0; line-height:1.3;">{{ news }}</pre>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Статистика суток</h2>
+                <div class="stat">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Игрок</th>
+                                <th>Игрок EXP</th>
+                                <th>Клан EXP</th>
+                                <th>Рейтинг</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each statistics}}
+                            <tr>
+                                <td>{{ inc @index}}</td>
+                                <td><a href="/user/{{ this.uid.uid }}" target="_blank" rel="noopener">{{ this.uid.name }}</a></td>
+                                <td>{{ this.samples }}</td>
+                                <td>{{ this.exp }}</td>
+                                <td>{{ this.clan_rating }}</td>
+                            </tr>
                             {{/each}}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        Чёрный список ({{ count.blacklist }})
-                        <div>
-                            {{#each blacklist}}
-                            <a href="/user/{{ this.uid }}" class="collection-item" target='_blank'>
-                                <pre>{{ this.name }}[{{ this.level }}]</pre>
-                            </a>
-                            {{/each}}
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
+                            <tr>
+                                <td></td>
+                                <td><strong>Всего</strong></td>
+                                <td>{{ rank.dailyPlayerExp }}</td>
+                                <td>{{ rank.dailyTotalExp }}</td>
+                                <td>{{ rank.DailyTotalRaiting }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Члены ({{ count.members }})</h2>
+                <div class="chips">
+                    {{#each members}}
+                    <a href="/user/{{ this.uid }}" class="chip" target="_blank" rel="noopener"><span>{{ this.name }}</span><span>[{{ this.level }}]</span></a>
+                    {{/each}}
+                </div>
+            </div>
+            {{#if count.blacklist}}
+            <div class="panel">
+                <h2>Чёрный список ({{ count.blacklist }})</h2>
+                <div class="chips">
+                    {{#each blacklist}}
+                    <a href="/user/{{ this.uid }}" class="chip" target="_blank" rel="noopener"><span>{{ this.name }}</span><span>[{{ this.level }}]</span></a>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+        </div>
     </div>
 </body>
-
 </html>

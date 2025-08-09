@@ -1,102 +1,47 @@
 <!DOCTYPE html>
-<html lang="ru">
-
+<html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta property="og:type" content="profile" />
-    <meta name="description" content="UID: {{ uid }}
-Уровень шамана: {{ shaman_level }}
-Модератор: {{ moderator }}
-Профиль: {{ profile }}">
-    <meta property="og:title" content="Карточка игрока: {{ name }}[{{ level }}]">
-    <meta property="og:description" content="UID: {{ uid }}
-Уровень шамана: {{ shaman_level }}
-Модератор: {{ moderator }}
-Профиль: {{ profile }}">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="squirrelsquery.yukkerike.ru">
-    <meta name="twitter:title" content="Карточка игрока: {{ name }}[{{ level }}]">
-    <meta name="twitter:description" content="UID: {{ uid }}
-Уровень шамана: {{ shaman_level }}
-Модератор: {{ moderator }}
-Профиль: {{ profile }}">
-    <meta name="viewport" content="width=540px, initial-scale=1.0">
-    {{> materialize}}
-    <title>{{ name }}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="{{ name }} [{{ level }}] (UID {{ uid }})">
+    {{#if profile}}<meta property="og:description" content="{{ profile }}">{{/if}}
+    {{> styles}}
+    <title>{{ name }} — профиль</title>
 </head>
-
 <body>
     <div class="ct">
         {{> navbar}}
-        <table>
-            <tbody>
-                <tr>
-                    <td>UID</td>
-                    <td>{{ uid }}</td>
-                </tr>
-                <tr>
-                    <td>Никнейм</td>
-                    <td>
-                        <pre>{{ name }}</pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Уровень</td>
-                    <td>{{ level }}</td>
-                </tr>
-                <tr>
-                    <td>Уровень шамана</td>
-                    <td>{{ shaman_level }}</td>
-                </tr>
-                <tr>
-                    <td>Модератор</td>
-                    <td>{{ moderator }}</td>
-                </tr>
-                <tr>
-                    <td>Онлайн</td>
-                    <td>{{ online }}</td>
-                </tr>
-                <tr>
-                    <td>Пол</td>
-                    <td>{{ sex }}</td>
-                </tr>
-                <tr>
-                    <td>ID клана</td>
-                    <td>{{#if clan_id}}
-                        <a href="/clan/{{ clan_id }}" target='_blank'>{{ clan_id }}</a>
-                        {{else}}
-                        Нет
-                        {{/if}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Давно не играл</td>
-                    <td>{{ is_gone }}</td>
-                </tr>
-                <tr>
-                    <td>Страница</td>
-                    <td><a href="{{ profile }}" target='_blank'>{{ profile }}</a></td>
-                </tr>
-                <tr>
-                    <td>Дата рождения</td>
-                    <td>{{ bdate }}</td>
-                </tr>
-                <tr>
-                    <td>Есть VIP</td>
-                    <td>{{ vip_exist }}</td>
-                </tr>
-                <tr>
-                    <td>Опыт</td>
-                    <td>{{ exp }}</td>
-                </tr>
-                <tr>
-                    <td>Опыт шамана</td>
-                    <td>{{ shaman_exp }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="grid">
+            <div class="panel">
+                <h2>Игрок</h2>
+                <div class="nickname">{{ name }} <span style="opacity:.5; font-weight:500;">[{{ level }}]</span></div>
+                <div class="badge-row">
+                    {{#if moderator}}<span class="badge badge-mod">Модератор</span>{{else}}{{#if online}}<span class="badge badge-online">Онлайн</span>{{else}}<span class="badge badge-offline">Оффлайн</span>{{/if}}{{/if}}
+                    {{#if vip_exist}}<span class="badge badge-vip">VIP</span>{{/if}}
+                    <span class="badge">{{ sex }}</span>
+                </div>
+                <ul class="meta-list">
+                    <li class="meta-item"><span class="label">UID</span><span>{{ uid }}</span></li>
+                    <li class="meta-item"><span class="label">Клан</span><span>{{#if clan_id}}<a href="/clan/{{ clan_id }}" target="_blank" rel="noopener">{{ clan_id }}</a>{{else}}—{{/if}}</span></li>
+                    <li class="meta-item"><span class="label">Страница</span><span>{{#if profile}}<a href="{{ profile }}" target="_blank" rel="noopener">{{ profile }}</a>{{else}}—{{/if}}</span></li>
+                    <li class="meta-item"><span class="label">Дата рождения</span><span>{{ bdate }}</span></li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h2>Прогресс</h2>
+                <div class="progress-block">
+                    <div class="progress-row"><span>Уровень</span><span>{{ level }} / 200</span></div>
+                    <div class="progress" style="--value: {{ level_progress }}%"><span></span></div>
+                    <div class="progress-row"><span>Шаман</span><span>{{ shaman_level }} / 51</span></div>
+                    <div class="progress" style="--value: {{ shaman_level_progress }}%"><span></span></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-tile"><p class="stat-label">Опыт</p><div class="stat-value">{{ exp }}</div></div>
+                    <div class="stat-tile"><p class="stat-label">Опыт шамана</p><div class="stat-value">{{ shaman_exp }}</div></div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
-
 </html>

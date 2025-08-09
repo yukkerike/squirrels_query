@@ -4,76 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=540px, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>squirrels_query</title>
-    {{> materialize}}
-    <style>
-        .tabs_hack {
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .tabs-wrapper {
-            border: 1px solid #d3d3d3;
-            max-width: 100%;
-            margin: 10px auto;
-            display: flex;
-            flex-wrap: wrap;
-            position: relative;
-        }
-
-        .content {
-            width: 100%;
-            display: none;
-            padding: 15px;
-            background-color: #eee;
-            padding-bottom: 0;
-        }
-
-        .tab {
-            text-align: center;
-            padding: 10px;
-            flex-grow: 1;
-        }
-
-        #tab-1:checked~.tab-1,
-        #tab-2:checked~.tab-2 {
-            background-color: #eee;
-        }
-
-        #tab-1:checked~.content-1,
-        #tab-2:checked~.content-2 {
-            display: block;
-        }
-
-        .tab:hover {
-            background-color: #d1d1d1;
-        }
-
-        form {
-            text-align: center; 
-        }
-
-        input {
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        input[type=submit] {
-            background: #275fae;
-            color: white;
-        }
-
-        input:focus {
-            box-shadow: 0 0 0 2px white, 0 0 0 3px #27AE60;
-        }
-    </style>
+    {{> styles}}
 </head>
 
 <body>
@@ -82,23 +15,28 @@
         <div class="tabs-wrapper">
             <input class="tabs_hack" id="tab-1" name="tabs" type="radio" checked>
             <input class="tabs_hack" id="tab-2" name="tabs" type="radio">
-            <label class="tab tab-1" for="tab-1">Игроки</label>
-            <label class="tab tab-2" for="tab-2">Кланы</label>
+            <div class="tabs">
+                <label class="tab tab-1" for="tab-1">Игрок</label>
+                <label class="tab tab-2" for="tab-2">Клан</label>
+            </div>
             <div class="content content-1">
                 <form action="/user/" method="get">
-                    <input name="uid" placeholder="UID игрока" type="text">
-                    <input type="submit" value="Найти">
+                    <h3>Поиск игрока</h3>
+                    <input name="uid" placeholder="Введите UID игрока" type="text" required>
+                    <button class="btn-submit" type="submit">Найти игрока</button>
                 </form>
             </div>
             <div class="content content-2">
                 <form action="/clan/" method="get">
-                    <input name="id" placeholder="ID клана" type="text">
-                    <input type="submit" value="Найти">
+                    <h3>Поиск клана</h3>
+                    <input name="id" placeholder="Введите ID клана, например 67.json" type="text" required>
+                    <button class="btn-submit" type="submit">Найти клан</button>
                 </form>
             </div>
         </div>
-        <a href="https://stats.uptimerobot.com/hfhWlNPNqP" target='_blank'>Проверить работу сервера можно по ссылке.</a>
-        <p>Для получения информации в машиночитаемом формате добавьте ?json в конец url.</p>
+        <div class="info-box">
+            <a href="https://stats.uptimerobot.com/hfhWlNPNqP" target='_blank' rel="noopener">Проверить статус сервера</a> · JSON: добавьте <code>.json</code> к URL.
+        </div>
     </div>
 </body>
 

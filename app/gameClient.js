@@ -66,13 +66,14 @@ async function getClan(clanId, mask) {
         ])
         data = data.data.data[0]
         const userData = await Promise.all([
-            getUser(data.leader_id, 8 | 256 | 1024),
             getUser(membersIds.data.playerIds, 8 | 256 | 1024),
-            getUser(data.blacklist, 8 | 256 | 1024)
+            data.blacklist.length && getUser(data.blacklist, 8 | 256 | 1024) || null
         ])
-        data.leader_id = userData[0]
-        data.members = userData[1]
-        data.blacklist = userData[2]
+        data.members = userData[0]
+        data.leader_id = data.members.find(member => member.uid === data.leader_id)
+        data.blacklist = userData[1]
+        data.members.sort((a, b) => b.exp - a.exp)
+        data.blacklist?.sort((a, b) => b.exp - a.exp)
         data.rank.dailyPlayerExp = 0
         data.rank.dailyTotalExp = 0
         data.rank.DailyTotalRaiting = 0
