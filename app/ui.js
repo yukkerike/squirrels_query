@@ -39,7 +39,7 @@ app.get('/user/:userId', async (req, res) => {
         res.redirect(`/user/${userId}`)
         return
     }
-    const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536
+    const mask = 4 | 8 | 16 | 64 | 128 | 256 | 1024 | 4096 | 16384 | 65536 | 262144
     const data = await getUser(userId, mask)
     if (data === null) {
         res.status(404)
@@ -65,6 +65,8 @@ app.get('/user/:userId', async (req, res) => {
             vip_exist: !!data.vip_info?.vip_exist,
             exp: data.exp,
             shaman_exp: data.shaman_exp,
+            rating_player: data.rating_info.rating_player,
+            rating_shaman: data.rating_info.rating_shaman,
             level_progress: levelProgress,
             shaman_level_progress: shamanLevelProgress,
         })
